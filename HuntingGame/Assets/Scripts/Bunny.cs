@@ -5,15 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Bunny : Animal
 {
-    // Start is called before the first frame update
-    void Start()
+    void OnTriggerStay2D(Collider2D collider)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Debug.Log("OnTrigger2DStay Bunny");
+        if (!collider.isTrigger)
+        {
+            Debug.Log(this.transform.position - collider.transform.position);
+            velocities.Add(new Vector2(this.transform.position.x - collider.transform.position.x, this.transform.position.y - collider.transform.position.y));
+        }
     }
 }

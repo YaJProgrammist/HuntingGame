@@ -1,73 +1,120 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private int startBunnyCount;
-    [SerializeField] private int startDoeCount;
-    [SerializeField] private int startWolfCount;
+    [SerializeField] private List<AnimalSettings> animalsSettings;
+    [SerializeField] private Transform animalsSpawnPivot;
+    [SerializeField] private double distanceBetweenPoints;
+
     private System.Random rand;
-    private float FIELD_WIDTH = 500;
-    private float FIELD_HEIGHT = 500;
-    private Dictionary<AnimalType, int> animalCounts;
+    private const float FIELD_WIDTH = 100;
+    private const float FIELD_HEIGHT = 100;
+    private Dictionary<AnimalType, List<Animal>> animalLists;
+
+    public Dictionary<AnimalType, int> NeededCount { get; set; }
+    public event EventHandler<AnimalCountChangedEventArgs> OnAnimalCountChanged;
 
     void Awake()
     {
         rand = new System.Random();
 
-        animalCounts = new Dictionary<AnimalType, int>();
-        animalCounts.Add(AnimalType.Bunny, 0);
-        animalCounts.Add(AnimalType.Doe, 0);
-        animalCounts.Add(AnimalType.Wolf, 0);
+        animalLists = new Dictionary<AnimalType, List<Animal>>();
+        NeededCount = new Dictionary<AnimalType, int>();
+
+        foreach (AnimalSettings animalSettings in animalsSettings)
+        {
+            animalLists.Add(animalSettings.AnimalType, new List<Animal>());
+            NeededCount.Add(animalSettings.AnimalType, animalSettings.StartCount);
+        }
     }
 
     void Start()
     {
         RespawnEverything();
-
     }
 
     void Update()
     {
-        
+        foreach (KeyValuePair<AnimalType, int> neededCountPair in NeededCount)
+        {
+            AdjustAnimalCount(neededCountPair.Key, neededCountPair.Value);
+        }
     }
 
     public void RespawnEverything()
     {
-
+        foreach(AnimalSettings animalSettings in animalsSettings)
+        {
+            DeleteAllAnimalKind(animalSettings.AnimalType);
+            NeededCount[animalSettings.AnimalType] = animalSettings.StartCount;
+        }
     }
 
-    public void AdjustAnimalCount(AnimalType animal, int newAnimalCount)
+    private void AdjustAnimalCount(AnimalType animal, int newAnimalCount)
     {
-        if (newAnimalCount == animalCounts[animal])
+        if (newAnimalCount == animalLists[animal].Count)
         {
             return;
         }
 
-        if (newAnimalCount < animalCounts[animal])
+        if (newAnimalCount < animalLists[animal].Count)
         {
-
+            DeleteRandomAnimals(animalLists[animal], animalLists[animal].Count - newAnimalCount);
         }
         else
         {
-            GetRandomFreePoints(newAnimalCount - animalCounts[animal]);
+            List<Vector2> positionsOfNewAnimals = GetRandomFreePoints(newAnimalCount - animalLists[animal].Count);
+
+            AnimalSettings animalSettings = animalsSettings.Find(animSett => animSett.AnimalType == animal);
+
+            foreach (Vector2 position in positionsOfNewAnimals)
+            {
+                Animal spawnedAnimal = Instantiate(animalSettings.Prefab);
+                spawnedAnimal.transform.position = position;
+                spawnedAnimal.transform.SetParent(animalsSpawnPivot, false);
+                animalLists[animalSettings.AnimalType].Add(spawnedAnimal);
+            }
         }
 
-        animalCounts[animal] = newAnimalCount;
+        OnAnimalCountChanged?.Invoke(this, new AnimalCountChangedEventArgs(animal));
     }
 
-    private List<Point> GetRandomFreePoints(int pointsCount)
+    public int GetAnimalCount(AnimalType animalType)
     {
-        double distanceBetweenPoints = 5;
+        return animalLists[animalType].Count;
+    }
+
+    private void DeleteAllAnimalKind(AnimalType animalType)
+    {
+        foreach (Animal animal in animalLists[animalType])
+        {
+            Destroy(animal.gameObject);
+        }
+
+        animalLists[animalType].Clear();
+    }
+
+    private void DeleteRandomAnimals(List<Animal> animalList, int deleteCount)
+    {
+        for (int i = 0; i < deleteCount; i++)
+        {
+            int animalToDeleteInd = rand.Next(animalList.Count);
+            Destroy(animalList[animalToDeleteInd].gameObject);
+            animalList.RemoveAt(animalToDeleteInd);
+        }
+    }
+
+    private List<Vector2> GetRandomFreePoints(int pointsCount)
+    {
         double squareDistanceBetweenPoints = Math.Pow(distanceBetweenPoints, 2);
 
-        List<Point> points = new List<Point>();
+        List<Vector2> points = new List<Vector2>();
 
         for (int i = 0; i < pointsCount; i++)
         {
-            Point newPoint;
+            Vector2 newPoint;
 
             while (true)
             {
@@ -77,7 +124,7 @@ public class SpawnManager : MonoBehaviour
 
                 for (int j = 0; j < points.Count; j++)
                 {
-                    double squareDistance = Math.Pow(points[j].X - newPoint.X, 2) + Math.Pow(points[j].Y - newPoint.Y, 2);
+                    double squareDistance = GetSquareDistanceBetweenPoints(newPoint, points[j]);
                     if (squareDistance < squareDistanceBetweenPoints)
                     {
                         isDistantFromOtherPoints = false;
@@ -85,7 +132,7 @@ public class SpawnManager : MonoBehaviour
                     }
                 }
 
-                if (isDistantFromOtherPoints)
+                if (isDistantFromOtherPoints && !PointIsCloseToExistingAnimals(newPoint))
                 {
                     break;
                 }
@@ -97,11 +144,45 @@ public class SpawnManager : MonoBehaviour
         return points;
     }
 
-    private Point GetRandomPointOnField()
+    private bool PointIsCloseToExistingAnimals(Vector2 point)
     {
-        double x = rand.Next((int)(FIELD_WIDTH * 1000)) / 1000.0;
-        double y = rand.Next((int)(FIELD_HEIGHT * 1000)) / 1000.0;
+        bool isCloseToExistingAnimals = false;
 
-        return new Point(x, y);
+        double squareDistanceBetweenPoints = Math.Pow(distanceBetweenPoints, 2);
+
+        foreach (List<Animal> animalList in animalLists.Values)
+        {
+            foreach (Animal animal in animalList)
+            {
+                Vector2 position = animal.transform.position;
+
+                double squareDistance = GetSquareDistanceBetweenPoints(point, position);
+                if (squareDistance < squareDistanceBetweenPoints)
+                {
+                    isCloseToExistingAnimals = true;
+                    break;
+                }
+            }
+
+            if (isCloseToExistingAnimals)
+            {
+                break;
+            }
+        }
+
+        return isCloseToExistingAnimals;
+    }
+
+    private Vector2 GetRandomPointOnField()
+    {
+        float x = rand.Next((int)(FIELD_WIDTH * 1000)) / 1000.0f;
+        float y = rand.Next((int)(FIELD_HEIGHT * 1000)) / 1000.0f;
+
+        return new Vector2(x, y);
+    }
+
+    private double GetSquareDistanceBetweenPoints(Vector2 point1, Vector2 point2)
+    {
+        return Math.Pow(point1.x - point2.x, 2) + Math.Pow(point1.y - point2.y, 2);
     }
 }

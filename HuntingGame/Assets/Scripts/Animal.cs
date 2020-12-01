@@ -5,19 +5,18 @@ using UnityEngine;
 public abstract class Animal : MonoBehaviour
 {
     private Rigidbody2D rigidbody;
-    private List<Vector2> velocities;
+    protected List<Vector2> velocities;
 
-    // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         velocities = new List<Vector2>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         AdjustVelocity();
+        velocities.Clear();
     }
 
     private void AdjustVelocity()

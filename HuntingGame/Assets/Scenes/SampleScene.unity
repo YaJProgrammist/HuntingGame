@@ -150,6 +150,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e040fea1a15a2b4e92802ab273f3888, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animalsSettings:
+  - AnimalType: 0
+    StartCount: 20
+    Prefab: {fileID: 6425930138623557067, guid: 93b46c87b46a16543b3305bceb3f5181,
+      type: 3}
+  - AnimalType: 1
+    StartCount: 20
+    Prefab: {fileID: 6918842719086650215, guid: 5a7cdbf7e4b5e0747b24534f52d6235d,
+      type: 3}
+  - AnimalType: 2
+    StartCount: 20
+    Prefab: {fileID: 5474627847326342873, guid: 6a0a82ede42fc784a893c859f2bcb4ce,
+      type: 3}
+  animalsSpawnPivot: {fileID: 23811629}
+  distanceBetweenPoints: 0
 --- !u!4 &15111239
 Transform:
   m_ObjectHideFlags: 0
@@ -159,6 +174,36 @@ Transform:
   m_GameObject: {fileID: 15111237}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.835434, y: -0.3977908, z: -0.6300416}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &23811628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 23811629}
+  m_Layer: 0
+  m_Name: AnimalsSpawnPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &23811629
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23811628}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -50, y: -50, z: -3.4079506}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -209,6 +254,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 361742883}
+  - component: {fileID: 361742884}
   m_Layer: 5
   m_Name: DoeNumberViewer
   m_TagString: Untagged
@@ -237,6 +283,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 196}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &361742884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361742882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc8010bb29232e4ca9af844465289d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalType: 1
+  inputField: {fileID: 1912054651}
+  slider: {fileID: 1617113035}
+  spawnManager: {fileID: 15111238}
 --- !u!1 &419815083
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,13 +1066,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 979989211}
   m_TextComponent: {fileID: 998316005}
   m_Placeholder: {fileID: 450293395}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -1149,6 +1211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1054569211}
+  - component: {fileID: 1054569212}
   m_Layer: 5
   m_Name: BunnyNumberViewer
   m_TagString: Untagged
@@ -1177,6 +1240,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 236}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1054569212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054569210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc8010bb29232e4ca9af844465289d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalType: 0
+  inputField: {fileID: 1183708328}
+  slider: {fileID: 2139657474}
+  spawnManager: {fileID: 15111238}
 --- !u!1 &1079444637
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,6 +1265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1079444638}
+  - component: {fileID: 1079444639}
   m_Layer: 5
   m_Name: WolfNumberViewer
   m_TagString: Untagged
@@ -1214,6 +1294,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 155}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1079444639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079444637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc8010bb29232e4ca9af844465289d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalType: 2
+  inputField: {fileID: 979989210}
+  slider: {fileID: 1714121111}
+  spawnManager: {fileID: 15111238}
 --- !u!1 &1093465743
 GameObject:
   m_ObjectHideFlags: 0
@@ -1370,13 +1466,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1183708329}
   m_TextComponent: {fileID: 2104297252}
   m_Placeholder: {fileID: 1530613971}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -1525,7 +1621,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 50, y: 50}
+  m_Size: {x: 100, y: 100}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1934,8 +2030,8 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1430397781}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
+  m_MaxValue: 100
+  m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2097,8 +2193,8 @@ MonoBehaviour:
   m_HandleRect: {fileID: 698165557}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
+  m_MaxValue: 100
+  m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2352,13 +2448,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1912054652}
   m_TextComponent: {fileID: 1329318237}
   m_Placeholder: {fileID: 419815085}
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 1
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -2643,8 +2739,8 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1669639484}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
+  m_MaxValue: 100
+  m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
