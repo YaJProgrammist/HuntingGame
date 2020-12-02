@@ -75,6 +75,11 @@ public class SpawnManager : MonoBehaviour
                 spawnedAnimal.transform.position = position;
                 spawnedAnimal.transform.SetParent(animalsSpawnPivot, false);
                 animalLists[animalSettings.AnimalType].Add(spawnedAnimal);
+                spawnedAnimal.OnAnimalRemoved += (a, ea) => 
+                    {
+                        animalLists[animalSettings.AnimalType].Remove(ea.Animal);
+                        NeededCount[animalSettings.AnimalType]--;
+                    };
             }
         }
 

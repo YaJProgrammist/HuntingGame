@@ -1,19 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Wolf : Animal
 {
-    const float NORMAL_SPEED = 5;
-    const float HIGH_SPEED = 15;
-    const float TIME_WITHOUT_FOOD = 10;
+    const float NORMAL_SPEED = 3;
+    const float HIGH_SPEED = 8;
+    const float TIME_WITHOUT_FOOD = 60;
     private float timerWithoutFood = 0;
+    [SerializeField] private ColliderTrigger flairArea;
+    [SerializeField] private ColliderTrigger selfCollider;
 
     protected override void Start()
     {
         base.Start();
         currentSpeed = NORMAL_SPEED;
+        flairArea.OnColliderTriggered += (s, ea) => OnFlairTriggered(ea.Collider);
+        selfCollider.OnColliderTriggered += (s, ea) => OnSelfTriggered(ea.Collider);
     }
 
     protected override void Update()
@@ -22,25 +24,23 @@ public class Wolf : Animal
 
         if (timerWithoutFood >= TIME_WITHOUT_FOOD)
         {
-            Destroy(this.gameObject);
+            this.Remove();
         }
 
         base.Update();
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnSelfTriggered(Collider2D collider)
     {
-        Collider2D collider = collision.collider;
-        if (collider.TryGetComponent<Bunny>(out _) || collider.TryGetComponent<Doe>(out _) || collider.TryGetComponent<Hunter>(out _))
+        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "hunter")
         {
-            Destroy(collider.gameObject);
             timerWithoutFood = 0;
         }
     }
 
-    void OnTriggerStay2D(Collider2D collider)
+    void OnFlairTriggered(Collider2D collider)
     {
-        if (!collider.isTrigger && !collider.TryGetComponent<Wolf>(out _))
+        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "hunter")
         {
             currentSpeed = HIGH_SPEED;
             velocities.Add(collider.transform.position - this.transform.position);
