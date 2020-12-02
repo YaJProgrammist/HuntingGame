@@ -5,15 +5,21 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Doe : Animal
 {
-    // Start is called before the first frame update
-    void Start()
+    const float NORMAL_SPEED = 5;
+    const float HIGH_SPEED = 10;
+
+    protected override void Start()
     {
-        
+        base.Start();
+        currentSpeed = NORMAL_SPEED;
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerStay2D(Collider2D collider)
     {
-        
+        if (!collider.isTrigger)
+        {
+            currentSpeed = HIGH_SPEED;
+            velocities.Add(this.transform.position - collider.transform.position);
+        }
     }
 }

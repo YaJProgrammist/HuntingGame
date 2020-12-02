@@ -6,15 +6,17 @@ public abstract class Animal : MonoBehaviour
 {
     private Rigidbody2D rigidbody;
     protected List<Vector2> velocities;
+    protected float currentSpeed;
 
-    void Start()
+    protected virtual void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         velocities = new List<Vector2>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
+        Debug.Log("upd");
         AdjustVelocity();
         velocities.Clear();
     }
@@ -33,6 +35,6 @@ public abstract class Animal : MonoBehaviour
             averageVelocity /= velocities.Count;
         }
 
-        rigidbody.velocity = averageVelocity;
+        rigidbody.velocity = averageVelocity * currentSpeed;
     }
 }

@@ -5,13 +5,21 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Bunny : Animal
 {
+    const float NORMAL_SPEED = 5;
+    const float HIGH_SPEED = 20;
+
+    protected override void Start()
+    {
+        base.Start();
+        currentSpeed = NORMAL_SPEED;
+    }
+
     void OnTriggerStay2D(Collider2D collider)
     {
-        Debug.Log("OnTrigger2DStay Bunny");
         if (!collider.isTrigger)
         {
-            Debug.Log(this.transform.position - collider.transform.position);
-            velocities.Add(new Vector2(this.transform.position.x - collider.transform.position.x, this.transform.position.y - collider.transform.position.y));
+            currentSpeed = HIGH_SPEED;
+            velocities.Add(this.transform.position - collider.transform.position);
         }
     }
 }
