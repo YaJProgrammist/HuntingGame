@@ -38,7 +38,7 @@ public class Wolf : Animal
 
     void OnSelfTriggered(Collider2D collider)
     {
-        if (collider.tag == "wall")
+        if (collider.tag == "wall" || collider.tag == "bullet")
         {
             this.Remove();
             return;

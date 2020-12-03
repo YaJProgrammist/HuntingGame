@@ -26,7 +26,7 @@ public class Doe : Animal
 
     void OnSelfTriggered(Collider2D collider)
     {
-        if (collider.tag == "wolf" || collider.tag == "wall")
+        if (collider.tag == "wolf" || collider.tag == "wall" || collider.tag == "bullet")
         {
             this.Remove();
         }
