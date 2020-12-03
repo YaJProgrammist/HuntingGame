@@ -19,7 +19,7 @@ public class Doe : Animal
 
     void OnSelfTriggered(Collider2D collider)
     {
-        if (collider.tag == "wolf")
+        if (collider.tag == "wolf" || collider.tag == "bullet")
         {
             this.Remove();
         }

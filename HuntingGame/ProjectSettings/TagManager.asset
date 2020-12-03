@@ -8,6 +8,7 @@ TagManager:
   - doe
   - wolf
   - hunter
+  - bullet
   layers:
   - Default
   - TransparentFX
