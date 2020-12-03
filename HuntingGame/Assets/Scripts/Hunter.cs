@@ -14,7 +14,7 @@ public class Hunter : MonoBehaviour
 
     [SerializeField] private Bullet bullet;
 
-    const float MAX_WEAPON_RADIUS = 5;
+    const float MAX_WEAPON_RADIUS = 25;
 
     private Rigidbody2D rigidbody;
 
@@ -27,12 +27,13 @@ public class Hunter : MonoBehaviour
 
     private void Shoot()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit))
             {
+                Debug.Log("got target");
                 var selectedPoint = hit.transform.position;
                 MakeShot(selectedPoint);
             }
@@ -44,11 +45,12 @@ public class Hunter : MonoBehaviour
     {
         if (bulletsLeft != 0)
         {
+            Debug.Log("bullet spawned");
             Vector2 bulletEndPoint = spawnPoint;
-            if (Vector2.Dot(transform.position, spawnPoint) > MAX_WEAPON_RADIUS)
-            {
-                bulletEndPoint = spawnPoint.normalized * MAX_WEAPON_RADIUS;
-            }
+            //if (Vector2.Dot(transform.position, spawnPoint) > MAX_WEAPON_RADIUS)
+            //{
+            //    bulletEndPoint = spawnPoint.normalized * MAX_WEAPON_RADIUS;
+            //}
 
             Instantiate(bullet, bulletEndPoint, Quaternion.identity);
             --bulletsLeft;
@@ -82,7 +84,8 @@ public class Hunter : MonoBehaviour
 
     private void LookInDirection()
     {
-        this.transform.rotation = Quaternion.FromToRotation(Vector2.up, new Vector2(Input.mousePosition.x , Input.mousePosition.y));
+        Vector2 direction = new Vector2(Input.mousePosition.x - Screen.width / 2, Input.mousePosition.y - Screen.height / 2).normalized;
+        this.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
