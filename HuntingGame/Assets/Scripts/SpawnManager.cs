@@ -65,22 +65,7 @@ public class SpawnManager : MonoBehaviour
         }
         else
         {
-            List<Vector2> positionsOfNewAnimals = GetRandomFreePoints(newAnimalCount - animalLists[animal].Count);
-
-            AnimalSettings animalSettings = animalsSettings.Find(animSett => animSett.AnimalType == animal);
-
-            foreach (Vector2 position in positionsOfNewAnimals)
-            {
-                Animal spawnedAnimal = Instantiate(animalSettings.Prefab);
-                spawnedAnimal.transform.position = position;
-                spawnedAnimal.transform.SetParent(animalsSpawnPivot, false);
-                animalLists[animalSettings.AnimalType].Add(spawnedAnimal);
-                spawnedAnimal.OnAnimalRemoved += (a, ea) => 
-                    {
-                        animalLists[animalSettings.AnimalType].Remove(ea.Animal);
-                        NeededCount[animalSettings.AnimalType]--;
-                    };
-            }
+            SpawnAnimals(animal, newAnimalCount - animalLists[animal].Count);
         }
 
         OnAnimalCountChanged?.Invoke(this, new AnimalCountChangedEventArgs(animal));
@@ -91,6 +76,76 @@ public class SpawnManager : MonoBehaviour
         return animalLists[animalType].Count;
     }
 
+    private void SpawnAnimals(AnimalType animal, int spawnCount)
+    {
+        AnimalSettings animalSettings = animalsSettings.Find(animSett => animSett.AnimalType == animal);
+
+        if (animalSettings.SpawnType == SpawnType.Group && spawnCount >= animalSettings.MinCountInGroup)
+        {
+            List<int> groupCounts = new List<int>();
+
+            int i = spawnCount;
+            while (i >= animalSettings.MinCountInGroup)
+            {
+                int newCount;
+                if (i < 2 * animalSettings.MinCountInGroup)
+                {
+                    newCount = i;
+                }
+                else
+                {
+                    int maxCountPossible = Math.Min(i, animalSettings.MaxCountInGroup);
+
+                    if (animalSettings.MaxCountInGroup + animalSettings.MinCountInGroup > i)
+                    {
+                        newCount = animalSettings.MinCountInGroup;
+                    }
+                    else
+                    {
+                        newCount = rand.Next(maxCountPossible - animalSettings.MinCountInGroup) + animalSettings.MinCountInGroup;
+                    }
+                }
+
+                groupCounts.Add(newCount);
+                i -= newCount;
+            }
+
+            List<Vector2> positionsOfNewGroups = GetRandomFreePoints(groupCounts.Count);
+
+            for (int j = 0; j < groupCounts.Count; j++)
+            {
+                GameObject spawnedGroup = Instantiate(animalSettings.GroupPrefabs.Find(grPr => grPr.AnimalCount == groupCounts[j]).Prefab);
+                foreach (Animal animalPrefab in spawnedGroup.GetComponentsInChildren<Animal>())
+                {
+                    InstantiateAnimal(positionsOfNewGroups[j] + (Vector2)animalPrefab.transform.position, animalPrefab, animalSettings.AnimalType);
+                }
+            }
+
+            return;
+        }
+
+        List<Vector2> positionsOfNewAnimals = GetRandomFreePoints(spawnCount);
+
+        foreach (Vector2 position in positionsOfNewAnimals)
+        {
+            InstantiateAnimal(position, animalSettings.Prefab, animalSettings.AnimalType);
+        }
+    }
+
+    private void InstantiateAnimal(Vector2 position, Animal prefab, AnimalType animalType)
+    {
+        Animal spawnedAnimal = Instantiate(prefab);
+        spawnedAnimal.transform.position = position;
+        spawnedAnimal.transform.SetParent(animalsSpawnPivot, false);
+        animalLists[animalType].Add(spawnedAnimal);
+        spawnedAnimal.OnAnimalRemoved += (s, ea) =>
+        {
+            animalLists[animalType].Remove(ea.Animal);
+            NeededCount[animalType]--;
+            OnAnimalCountChanged?.Invoke(this, new AnimalCountChangedEventArgs(animalType));
+        };
+    }
+
     private void DeleteAllAnimalKind(AnimalType animalType)
     {
         foreach (Animal animal in animalLists[animalType])
@@ -99,6 +154,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         animalLists[animalType].Clear();
+        OnAnimalCountChanged?.Invoke(this, new AnimalCountChangedEventArgs(animalType));
     }
 
     private void DeleteRandomAnimals(List<Animal> animalList, int deleteCount)

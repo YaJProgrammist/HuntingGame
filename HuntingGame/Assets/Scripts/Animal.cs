@@ -6,9 +6,19 @@ using UnityEngine;
 public abstract class Animal : MonoBehaviour
 {
     private Rigidbody2D rigidbody;
+    private bool isWondering;
+    protected bool isAccelerated;
+    private System.Random rand;
     protected List<Vector2> velocities;
     protected float currentSpeed;
     public event EventHandler<AnimalRemovedEventArgs> OnAnimalRemoved;
+
+    void Awake()
+    {
+        rand = new System.Random();
+        velocities = new List<Vector2>();
+        isAccelerated = false;
+    }
 
     public void Remove()
     {
@@ -19,16 +29,39 @@ public abstract class Animal : MonoBehaviour
     protected virtual void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        velocities = new List<Vector2>();
+        StartWondering();
     }
 
     protected virtual void Update()
     {
-        AdjustVelocity();
-        velocities.Clear();
+        if (isAccelerated == true)
+        {
+            isWondering = false;
+            AdjustVelocity();
+            velocities.Clear();
+            isAccelerated = false;
+            return;
+        }
+
+        if (isWondering)
+        {
+            ContinueWondering();
+            velocities.Clear();
+            return;
+        }
+
+        StartWondering();
     }
 
     private void AdjustVelocity()
+    {
+        Vector2 averageVelocity = GetAverageVelocity();
+
+        rigidbody.velocity = (rigidbody.velocity * 0.2f + averageVelocity * 0.8f).normalized * currentSpeed;
+        LookInDirection(rigidbody.velocity);
+    }
+
+    private Vector2 GetAverageVelocity()
     {
         Vector2 averageVelocity = new Vector2(0, 0);
 
@@ -42,12 +75,43 @@ public abstract class Animal : MonoBehaviour
             averageVelocity /= velocities.Count;
         }
 
-        rigidbody.velocity = averageVelocity * currentSpeed;
-        LookInDirection(averageVelocity);
+        return averageVelocity;
     }
 
     private void LookInDirection(Vector2 direction)
     {
         this.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
+    }
+
+    protected virtual void StartWondering()
+    {
+        isWondering = true;
+        ContinueWondering();
+        velocities.Clear();
+    }
+
+    protected virtual void ContinueWondering()
+    {
+        Vector2 newVelocityPart;
+
+        if (velocities.Count > 0)
+        {
+            newVelocityPart = GetAverageVelocity();
+        }
+        else
+        {
+            newVelocityPart = new Vector2(rand.Next(20) - 10, rand.Next(20) - 10).normalized;
+        }
+
+        rigidbody.velocity = (rigidbody.velocity * 0.8f + newVelocityPart * 0.2f).normalized * currentSpeed;
+        LookInDirection(rigidbody.velocity);
+    }
+
+    protected void TryAvoidWall(Collider2D collider)
+    {
+        if (collider.TryGetComponent<Wall>(out Wall wall))
+        {
+            velocities.Add(wall.PushBackVector);
+        }
     }
 }

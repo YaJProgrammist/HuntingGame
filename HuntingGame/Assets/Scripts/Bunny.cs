@@ -16,9 +16,15 @@ public class Bunny : Animal
         selfCollider.OnColliderTriggered += (s, ea) => OnSelfTriggered(ea.Collider);
     }
 
+    protected override void StartWondering()
+    {
+        currentSpeed = NORMAL_SPEED;
+        base.StartWondering();
+    }
+
     void OnSelfTriggered(Collider2D collider)
     {
-        if (collider.tag == "wolf" || collider.tag == "bullet")
+        if (collider.tag == "wolf" || collider.tag == "wall")
         {
             this.Remove();
         }
@@ -26,8 +32,17 @@ public class Bunny : Animal
 
     void OnFlairTriggered(Collider2D collider)
     {
-        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "wolf" || collider.tag == "hunter" || collider.tag == "bullet")
+        if (collider.tag == "wall")
         {
+            isAccelerated = true;
+            currentSpeed = HIGH_SPEED;
+            TryAvoidWall(collider);
+            return;
+        }
+
+        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "wolf" || collider.tag == "hunter")
+        {
+            isAccelerated = true;
             currentSpeed = HIGH_SPEED;
             velocities.Add(this.transform.position - collider.transform.position);
         }
