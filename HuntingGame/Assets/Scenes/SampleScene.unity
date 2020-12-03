@@ -177,7 +177,8 @@ MonoBehaviour:
       Prefab: {fileID: 2811159251219925395, guid: 85eea449d4b545949b87ab98c3866e13,
         type: 3}
     - AnimalCount: 6
-      Prefab: {fileID: 0}
+      Prefab: {fileID: 8034269745598707021, guid: 8473542419d378343ace90e8de96601b,
+        type: 3}
     - AnimalCount: 7
       Prefab: {fileID: 5537896833037330770, guid: 9c84214e029ef994091d0d632a58c276,
         type: 3}
