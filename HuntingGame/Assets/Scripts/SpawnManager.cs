@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -37,9 +38,11 @@ public class SpawnManager : MonoBehaviour
 
     void Update()
     {
-        foreach (KeyValuePair<AnimalType, int> neededCountPair in NeededCount)
+        List<AnimalType> keys = NeededCount.Keys.ToList();
+
+        foreach (AnimalType animalType in keys)
         {
-            AdjustAnimalCount(neededCountPair.Key, neededCountPair.Value);
+            AdjustAnimalCount(animalType, NeededCount[animalType]);
         }
     }
 
@@ -162,8 +165,11 @@ public class SpawnManager : MonoBehaviour
         for (int i = 0; i < deleteCount; i++)
         {
             int animalToDeleteInd = rand.Next(animalList.Count);
-            Destroy(animalList[animalToDeleteInd].gameObject);
-            animalList.RemoveAt(animalToDeleteInd);
+            if (animalToDeleteInd < animalList.Count && animalList[animalToDeleteInd] != null)
+            {
+                Destroy(animalList[animalToDeleteInd].gameObject);
+                animalList.RemoveAt(animalToDeleteInd);
+            }
         }
     }
 
