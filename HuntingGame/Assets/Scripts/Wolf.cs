@@ -30,8 +30,20 @@ public class Wolf : Animal
         base.Update();
     }
 
+    protected override void StartWondering()
+    {
+        currentSpeed = NORMAL_SPEED;
+        base.StartWondering();
+    }
+
     void OnSelfTriggered(Collider2D collider)
     {
+        if (collider.tag == "wall")
+        {
+            this.Remove();
+            return;
+        }
+
         if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "hunter")
         {
             timerWithoutFood = 0;
@@ -40,8 +52,15 @@ public class Wolf : Animal
 
     void OnFlairTriggered(Collider2D collider)
     {
+        if (collider.tag == "wall")
+        {
+            TryAvoidWall(collider);
+            return;
+        }
+
         if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "hunter")
         {
+            isAccelerated = true;
             currentSpeed = HIGH_SPEED;
             velocities.Add(collider.transform.position - this.transform.position);
         }

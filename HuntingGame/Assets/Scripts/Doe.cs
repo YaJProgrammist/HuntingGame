@@ -13,13 +13,20 @@ public class Doe : Animal
     {
         base.Start();
         currentSpeed = NORMAL_SPEED;
+        isAccelerated = false;
         flairArea.OnColliderTriggered += (s, ea) => OnFlairTriggered(ea.Collider);
         selfCollider.OnColliderTriggered += (s, ea) => OnSelfTriggered(ea.Collider);
     }
 
+    protected override void StartWondering()
+    {
+        currentSpeed = NORMAL_SPEED;
+        base.StartWondering();
+    }
+
     void OnSelfTriggered(Collider2D collider)
     {
-        if (collider.tag == "wolf")
+        if (collider.tag == "wolf" || collider.tag == "wall")
         {
             this.Remove();
         }
@@ -27,8 +34,15 @@ public class Doe : Animal
 
     void OnFlairTriggered(Collider2D collider)
     {
+        if (collider.tag == "wall")
+        {
+            TryAvoidWall(collider);
+            return;
+        }
+
         if (collider.tag == "wolf" || collider.tag == "hunter")
         {
+            isAccelerated = true;
             currentSpeed = HIGH_SPEED;
             velocities.Add(this.transform.position - collider.transform.position);
             return;
