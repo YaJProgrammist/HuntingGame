@@ -8,26 +8,25 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Hunter : MonoBehaviour
 {
-    [SerializeField] private float speed = 8;
+    [SerializeField] private float speed = 5;
 
-    [SerializeField] private int bulletsLeft = 100;
+    [SerializeField] private int bulletsQuantity = 100;
 
     [SerializeField] private Bullet bullet;
 
 
-    private const float MAX_WEAPON_RADIUS = 25;
-
     private const int FIELD_SIZE = 100;
 
 
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rb;
 
-    private Vector2 direction;
+    private int bulletsLeft;
 
 
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        bulletsLeft = bulletsQuantity;
     }
 
     private void Shoot()
@@ -38,13 +37,8 @@ public class Hunter : MonoBehaviour
 
             if (bulletsLeft != 0)
             {
-                Vector2 bulletEndPoint = spawnPoint;
-                //if (Vector2.Dot(transform.position, spawnPoint) > MAX_WEAPON_RADIUS)
-                //{
-                //    bulletEndPoint = spawnPoint.normalized * MAX_WEAPON_RADIUS;
-                //}
-
-                Instantiate(bullet, bulletEndPoint, Quaternion.identity);
+                Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+                newBullet.Move((spawnPoint - (Vector2)transform.position).normalized);
                 --bulletsLeft;
             }
         }
@@ -52,43 +46,11 @@ public class Hunter : MonoBehaviour
 
     private void Move()
     {
-        //if (Input.GetKey(KeyCode.W))
-        //{
-        //    rigidbody.velocity = Vector2.up * speed;
-        //}
-
-        //if (Input.GetKey(KeyCode.S))
-        //{
-        //    rigidbody.velocity = Vector2.down * speed;
-        //}
-
-        //if (Input.GetKey(KeyCode.A))
-        //{
-        //    rigidbody.velocity = Vector2.left * speed;
-        //}
-
-        //if (Input.GetKey(KeyCode.D))
-        //{
-        //    rigidbody.velocity = Vector2.right * speed;
-        //}
-
-        //if (Input.GetKey(KeyCode.A))
-        //    rigidbody.AddForce(Vector2.left);
-
-        //if (Input.GetKey(KeyCode.D))
-        //    rigidbody.AddForce(Vector2.right);
-
-        //if (Input.GetKey(KeyCode.W))
-        //    rigidbody.AddForce(Vector2.up);
-
-        //if (Input.GetKey(KeyCode.S))
-        //    rigidbody.AddForce(Vector2.down);
-
         Vector2 movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        rigidbody.velocity = movement * speed;
+        rb.velocity = movement * speed;
 
-        Camera.main.GetComponent<Rigidbody2D>().velocity = rigidbody.velocity;
+        Camera.main.GetComponent<Rigidbody2D>().velocity = rb.velocity;
     }
 
     private void LookInDirection()
@@ -107,7 +69,7 @@ public class Hunter : MonoBehaviour
 
     private void Die()
     {
-        bulletsLeft = 100;
+        bulletsLeft = bulletsQuantity;
         transform.position = new Vector2(UnityEngine.Random.Range(-FIELD_SIZE / 2 + 5, FIELD_SIZE / 2 - 5), UnityEngine.Random.Range(-FIELD_SIZE / 2 + 5, FIELD_SIZE / 2 - 5));
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
     }

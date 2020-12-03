@@ -9,4 +9,9 @@ public class ColliderTrigger : MonoBehaviour
     {
         OnColliderTriggered?.Invoke(this, new ColliderTriggeredEventArgs(collider));
     }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        OnColliderTriggered?.Invoke(this, new ColliderTriggeredEventArgs(collider));
+    }
 }
