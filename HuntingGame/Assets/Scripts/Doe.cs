@@ -27,7 +27,7 @@ public class Doe : Animal
 
     void OnFlairTriggered(Collider2D collider)
     {
-        if (collider.tag == "wolf" || collider.tag == "hunter")
+        if (collider.tag == "wolf" || collider.tag == "hunter" || collider.tag == "bullet")
         {
             currentSpeed = HIGH_SPEED;
             velocities.Add(this.transform.position - collider.transform.position);

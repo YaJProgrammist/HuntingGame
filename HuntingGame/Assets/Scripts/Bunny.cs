@@ -26,7 +26,7 @@ public class Bunny : Animal
 
     void OnFlairTriggered(Collider2D collider)
     {
-        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "wolf" || collider.tag == "hunter")
+        if (collider.tag == "bunny" || collider.tag == "doe" || collider.tag == "wolf" || collider.tag == "hunter" || collider.tag == "bullet")
         {
             currentSpeed = HIGH_SPEED;
             velocities.Add(this.transform.position - collider.transform.position);
