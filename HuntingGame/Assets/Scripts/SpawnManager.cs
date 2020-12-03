@@ -114,7 +114,7 @@ public class SpawnManager : MonoBehaviour
 
             for (int j = 0; j < groupCounts.Count; j++)
             {
-                GameObject spawnedGroup = Instantiate(animalSettings.GroupPrefabs.Find(grPr => grPr.AnimalCount == groupCounts[j]).Prefab);
+                GameObject spawnedGroup = animalSettings.GroupPrefabs.Find(grPr => grPr.AnimalCount == groupCounts[j]).Prefab;
                 foreach (Animal animalPrefab in spawnedGroup.GetComponentsInChildren<Animal>())
                 {
                     InstantiateAnimal(positionsOfNewGroups[j] + (Vector2)animalPrefab.transform.position, animalPrefab, animalSettings.AnimalType);
