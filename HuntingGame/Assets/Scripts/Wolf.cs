@@ -48,6 +48,10 @@ public class Wolf : Animal
         {
             timerWithoutFood = 0;
         }
+        else if (collider.tag == "bullet")
+        {
+            Remove();
+        }
     }
 
     void OnFlairTriggered(Collider2D collider)

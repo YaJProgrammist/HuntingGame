@@ -9,6 +9,7 @@ TagManager:
   - wolf
   - hunter
   - wall
+  - bullet
   layers:
   - Default
   - TransparentFX
