@@ -134,4 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeBeforeRemoving: 0.5
-  bulletSpeed: 100
+  bulletSpeed: 50

@@ -14,19 +14,30 @@ public class Hunter : MonoBehaviour
 
     [SerializeField] private Bullet bullet;
 
-
     private const int FIELD_SIZE = 100;
 
-
     private Rigidbody2D rb;
-
     private int bulletsLeft;
+
+
+    public Action<int> OnBulletsQuantityChanged;
+    public Action OnPlayerDied;
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         bulletsLeft = bulletsQuantity;
+        OnBulletsQuantityChanged?.Invoke(bulletsLeft);
+    }
+
+    private void AddBullets()
+    {
+        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < 10000)
+        {
+            bulletsLeft += bulletsQuantity;
+            OnBulletsQuantityChanged?.Invoke(bulletsLeft);
+        }
     }
 
     private void Shoot()
@@ -39,7 +50,9 @@ public class Hunter : MonoBehaviour
             {
                 Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.identity);
                 newBullet.Move((spawnPoint - (Vector2)transform.position).normalized);
+
                 --bulletsLeft;
+                OnBulletsQuantityChanged?.Invoke(bulletsLeft);
             }
         }
     }
@@ -69,7 +82,11 @@ public class Hunter : MonoBehaviour
 
     private void Die()
     {
+        OnPlayerDied?.Invoke();
+
         bulletsLeft = bulletsQuantity;
+        OnBulletsQuantityChanged?.Invoke(bulletsLeft);
+
         transform.position = new Vector2(UnityEngine.Random.Range(-FIELD_SIZE / 2 + 5, FIELD_SIZE / 2 - 5), UnityEngine.Random.Range(-FIELD_SIZE / 2 + 5, FIELD_SIZE / 2 - 5));
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
     }
@@ -79,6 +96,7 @@ public class Hunter : MonoBehaviour
         Move();
         LookInDirection();
         Shoot();
+        AddBullets();
 
     }
 }
