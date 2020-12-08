@@ -44,7 +44,7 @@ public class Bunny : Animal
         {
             isAccelerated = true;
             currentSpeed = HIGH_SPEED;
-            velocities.Add(this.transform.position - collider.transform.position);
+            velocities.Add((this.transform.position - collider.transform.position).normalized);
         }
     }
 }

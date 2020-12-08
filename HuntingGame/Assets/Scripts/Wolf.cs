@@ -66,7 +66,7 @@ public class Wolf : Animal
         {
             isAccelerated = true;
             currentSpeed = HIGH_SPEED;
-            velocities.Add(collider.transform.position - this.transform.position);
+            velocities.Add((collider.transform.position - this.transform.position).normalized);
         }
     }
 }

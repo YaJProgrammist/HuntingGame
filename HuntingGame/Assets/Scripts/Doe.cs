@@ -5,7 +5,7 @@ public class Doe : Animal
 {
     const float NORMAL_SPEED = 3;
     const float HIGH_SPEED = 5;
-    const float DISTANCE_BETWEEN_DOES = 1;
+    const float DISTANCE_BETWEEN_DOES = 0.5f;
     [SerializeField] private ColliderTrigger flairArea;
     [SerializeField] private ColliderTrigger selfCollider;
 
@@ -44,7 +44,7 @@ public class Doe : Animal
         {
             isAccelerated = true;
             currentSpeed = HIGH_SPEED;
-            velocities.Add(this.transform.position - collider.transform.position);
+            velocities.Add((this.transform.position - collider.transform.position).normalized);
             return;
         }
 
@@ -53,7 +53,7 @@ public class Doe : Animal
             return;
         }
 
-        Vector2 betweenVector = this.transform.position - collider.transform.position;
+        Vector2 betweenVector = (this.transform.position - collider.transform.position).normalized;
         float distance = betweenVector.magnitude;
 
         if (distance < DISTANCE_BETWEEN_DOES)

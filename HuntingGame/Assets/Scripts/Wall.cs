@@ -7,6 +7,6 @@ public class Wall : MonoBehaviour
 
     void Start()
     {
-        PushBackVector = (field.transform.position - this.transform.position).normalized;
+        PushBackVector = (field.transform.position - this.transform.position).normalized * 5;
     }
 }
